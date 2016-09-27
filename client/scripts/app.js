@@ -21,18 +21,27 @@ app.send = function(){
 	  }
 	});
 };
+
 app.fetch = function() {
-	$.ajax({
-  // This is the url you should use to communicate with the parse API server.
-  url: app.server,
-  type: 'GET',
-  contentType: 'application/json',
-  success: function (JSON) {
-    console.log('message');
-  },
-  error: function (err) {
-    // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
-    console.error('chatterbox: Failed to send message', data);
-  }
+$.ajax({
+ 
+ url: app.server,
+ type: 'GET',
+ data: JSON.stringify(message),
+ contentType: 'application/json',
+ success: function (data) {
+   console.log('chatterbox: Message sent');
+ },
+ error: function (data) {
+  
+   console.error('chatterbox: Failed to send message', data);
+ }
 });
-}
+};
+
+app.clearMessages = function () {
+ $('#chats').empty();
+
+};
+
+
