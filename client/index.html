@@ -24,12 +24,20 @@
     
   </head>
   <body>
-    <div id="main">
-      <h1>chatterbox</h1>
-      <!-- Your HTML goes here! -->
-      <input></input>
-
+  <div id="main">
+    <h1>chatterbox</h1>
+    <div id="rooms">
+      Room:
+      <select id="roomSelect">  
+      <option value=lobby>lobby </option>                                q
+      </select>
     </div>
+    <form action="#" id="send" method="post">
+      <input type="text" name="message" id="message"/>
+      <input type="submit" name="submit" class="submit"/>
+    </form>
     <div id="chats"></div>
+  </div>
+
   </body>
 </html>

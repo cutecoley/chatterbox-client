@@ -44,4 +44,24 @@ app.clearMessages = function () {
 
 };
 
+app.renderMessage = function (message) {
+  $('#chats').prepend("<li class='list-group-item'>" + "<strong class='username'>" + app.escapeHtml(message.username) + "</strong>: " + app.escapeHtml(message.text)  + "</li>");
+};
 
+app.escapeHtml = function (string) {
+  var entityMap = {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': '&quot;',
+      "'": '&#39;',
+      "/": '&#x2F;'
+  };
+  return String(string).replace(/[&<>"'\/]/g, function (s) {
+    return entityMap[s];
+  });
+};
+
+app.renderRoom = function (room) {
+  $('#roomSelect').append('<li>' + room + '</li>');
+};
