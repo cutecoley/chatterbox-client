@@ -10,22 +10,10 @@ app.roomNames = {};
 app.init = function() {
 
   // Creating our listeners
-  $( '.submit' ).on( 'click', function(event) {  
-    event.preventDefault(); // prevents default behavior of refreshing the page
-    var username = app.getParameterByName('username');
-    var message = $('#message').val();
-    var message = {
-      username: username,
-      text: message,
-      roomname: 'lobby' // TODO remove hardcoding
-    };
-    app.send(message);
-  });
+  $( '.submit' ).on( 'click', app.handleSubmit);
 
   // Delegate handlers to the friend class
-  $( "#chats" ).on( "click", "strong", function( event ) { // Problem: Our friends go away when you refresh the page
-    $(this).addClass('friend');
-  });
+  $( "#chats" ).on( "click", "strong", app.handleUsernameClick);
 
   // Add handler to room dropdown menu
   $('#roomSelect').on('change', function(event) {
@@ -37,6 +25,22 @@ app.init = function() {
     }
   });
 
+};
+
+app.handleUsernameClick = function(event) {
+  $(this).addClass('friend');
+};
+
+app.handleSubmit = function(event) {
+  event.preventDefault(); // prevents default behavior of refreshing the page
+  var username = app.getParameterByName('username');
+  var message = $('#message').val();
+  var message = {
+    username: username,
+    text: message,
+    roomname: 'lobby' // TODO remove hardcoding
+  };
+  app.send(message);
 };
 
 
