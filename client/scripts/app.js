@@ -23,6 +23,8 @@ app.init = function() {
       $('#roomSelect').append('<option value=' + newRoom + '>' + newRoom + ' </option>');
       $('#roomSelect').val(newRoom);
     }
+
+    app.fetch();
   });
 
 };
@@ -64,7 +66,7 @@ app.fetch = function() {
   $.ajax({
     url: app.server,
     type: 'GET',
-    data: { order: '-createdAt' },
+    data: { order: '-createdAt', roomname: JSON.stringify($('#roomSelect').val()) },
     success: function (data) {
       app.displayMessages(data);
       app.getRoomNames(data);
@@ -88,7 +90,6 @@ app.getRoomNames = function(data) {
 
 app.displayMessages = function(data) {
   // get results array
-  var $chats = $('#chats');
   app.clearMessages();
 
   // // Filter by messages in the current chat room
@@ -97,6 +98,10 @@ app.displayMessages = function(data) {
   // });
 
   var results = data.results;
+
+  results = results.filter(function(element) {
+    return element.roomname === $('#roomSelect').val();
+  });
 
   results.forEach(function(element, index) {
     app.renderMessage(element);
@@ -155,7 +160,7 @@ app.getParameterByName = function(name, url) { // TODO figure out exactly how th
 $( document ).ready(function() { // can only manipulate the page once the document is ready
   app.init();
   app.fetch();
-
+  $('#roomSelect').val('lobby');
 });
 
 // Get all the roomnames in the objects
