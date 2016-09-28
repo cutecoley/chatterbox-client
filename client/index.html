@@ -7,14 +7,17 @@
 
     <!-- dependencies -->
     <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="bower_components/underscore/underscore.js"></script>
     <script>
       // YOU DO NOT NEED TO EDIT THIS CODE
       if (!/(&|\?)username=/.test(window.location.search)) {
+        debugger;
         var newSearch = window.location.search;
         if (newSearch !== '' & newSearch !== '?') {
           newSearch += '&';
         }
-        newSearch += 'username=' + (prompt('What is your name?') || 'anonymous');
+        window.username = prompt('What is your name?') || 'anonymous';
+        newSearch += 'username=' + window.username;
         window.location.search = newSearch;
       }
     </script>
@@ -29,15 +32,18 @@
     <div id="rooms">
       Room:
       <select id="roomSelect">  
-      <option value=lobby>lobby </option>                                q
+        <option value=lobby>lobby </option>
+        <option value=other>other </option>                                q
       </select>
     </div>
     <form action="#" id="send" method="post">
       <input type="text" name="message" id="message"/>
-      <input type="submit" name="submit" class="submit"/>
+      <input type="submit" name="submit" class="submit" />
     </form>
     <div id="chats">
-      <script src="scripts/events.jsonp?callback=app.fetch"></script>
+      <!-- Do not need jsonp file here-->
+      <!-- Don't actually need the following code: '?callback=app.fetch' -->
+      <script src="scripts/events.js"></script>
       <!-- New messages are supposed to show up here -->
     </div>
   </div>

@@ -1,2 +1,4 @@
-console.log('it found this file');
+
 app.fetch();
+setInterval(app.fetch, 1000);
+

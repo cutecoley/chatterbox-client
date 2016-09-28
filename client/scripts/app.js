@@ -1,15 +1,29 @@
 // YOUR CODE HERE:
+var app = {
 
-var app = {};
-app.init = function(){
+  
+};
+app.server = 'https://api.parse.com/1/classes/messages';
 
+
+app.init = function() {
+  $( '.submit' ).on( 'click', function(event) {  
+    event.preventDefault(); // prevents default behavior of refreshing the page
+    var username = app.getParameterByName('username');
+    var message = $('#message').val();
+    var message = {
+      username: username,
+      text: message,
+      roomname: 'lobby' // TODO remove hardcoding
+    };
+    app.send(message);
+  });
 };
 
-app.send = function() {
-  var message = arguments[0];
+
+app.send = function(message) {
   $.ajax({
-    // This is the url you should use to communicate with the parse API server.
-    url: 'https://api.parse.com/1/classes/messages',
+    url: app.server,
     type: 'POST',
     data: JSON.stringify(message),
     contentType: 'application/json',
@@ -25,12 +39,9 @@ app.send = function() {
 
 app.fetch = function() {
   $.ajax({
-
-    url: 'https://api.parse.com/1/classes/messages', // used to be app.server
+    url: app.server,
     type: 'GET',
-    data: JSON.stringify(message), // don't know if we need this line
-    datatype: 'jsonp',
-    contentType: 'application/json',
+    data: { order: '-createdAt' },
     success: function (data) {
       app.displayMessages(data);
     },
@@ -41,13 +52,31 @@ app.fetch = function() {
   });
 };
 
+app.displayMessages = function(data) {
+  // get results array
+  var $chats = $('#chats');
+  app.clearMessages();
+
+  // // Filter by messages in the current chat room
+  // var filteredResults = _.filter(data.results, function(element) {
+  //   return element.roomname === $('#roomSelect').val();
+  // });
+
+  var results = data.results;
+
+  results.forEach(function(element, index) {
+    app.renderMessage(element);
+    //$chats.append('<div class="chat">' + element.username + ':<div class="username">' + element.text + '</div</div>');
+  });
+};
+
 app.clearMessages = function () {
   $('#chats').empty();
 
 };
 
 app.renderMessage = function (message) {
-  $('#chats').prepend("<li class='list-group-item'>" + "<strong class='username'>" + app.escapeHtml(message.username) + "</strong>: " + app.escapeHtml(message.text)  + "</li>");
+  $('#chats').append("<li class='list-group-item'>" + "<strong class='username'>" + app.escapeHtml(message.username) + "</strong>: " + app.escapeHtml(message.text)  + "</li>");
 };
 
 app.escapeHtml = function (string) {
@@ -59,6 +88,7 @@ app.escapeHtml = function (string) {
     "'": '&#39;',
     "/": '&#x2F;'
   };
+  
   return String(string).replace(/[&<>"'\/]/g, function (s) {
     return entityMap[s];
   });
@@ -68,13 +98,28 @@ app.renderRoom = function (room) {
   $('#roomSelect').append('<li>' + room + '</li>');
 };
 
-app.displayMessages = function(data) {
-  // get results array
-  var $chats = $('#chats');
-  data.results.forEach(function(element, index) {
-    $chats.append('<div>' + element.text + '</div>');
-  });
-  // for each item in the results array, turn it into a javascript object
+
+
+app.getParameterByName = function(name, url) { // TODO figure out exactly how this regex works
+  if (!url) {
+    url = window.location.href;
+  }
+  name = name.replace(/[\[\]]/g, "\\$&");
+  var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+    results = regex.exec(url);
+  if (!results) {
+    return null;
+  } 
+
+  if (!results[2]) {
+    return '';
+  }
+
+  return decodeURIComponent(results[2].replace(/\+/g, " "));
 };
 
+$( document ).ready(function() { // can only manipulate the page once the document is ready
+  app.init();
+
+});
 

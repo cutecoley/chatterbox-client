@@ -1,4 +1,4 @@
-// don't know what this file is supposed ot be for
+// is this the right way to do things?
 
-fetch();
-debugger;
+app.fetch();
+//setInterval(app.fetch, 1000);
