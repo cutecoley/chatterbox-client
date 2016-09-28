@@ -1,12 +1,15 @@
 // YOUR CODE HERE:
 var app = {
 
-  
+
 };
 app.server = 'https://api.parse.com/1/classes/messages';
+app.roomNames = {};
 
 
 app.init = function() {
+
+  // Creating our listeners
   $( '.submit' ).on( 'click', function(event) {  
     event.preventDefault(); // prevents default behavior of refreshing the page
     var username = app.getParameterByName('username');
@@ -18,6 +21,22 @@ app.init = function() {
     };
     app.send(message);
   });
+
+  // Delegate handlers to the friend class
+  $( "#chats" ).on( "click", "strong", function( event ) { // Problem: Our friends go away when you refresh the page
+    $(this).addClass('friend');
+  });
+
+  // Add handler to room dropdown menu
+  $('#roomSelect').on('change', function(event) {
+    if ($(this).val() === 'CREATE NEW ROOM') {
+      // create a new room
+      var newRoom = prompt('Enter the name of your new room');
+      $('#roomSelect').append('<option value=' + newRoom + '>' + newRoom + ' </option>');
+      $('#roomSelect').val(newRoom);
+    }
+  });
+
 };
 
 
@@ -44,12 +63,23 @@ app.fetch = function() {
     data: { order: '-createdAt' },
     success: function (data) {
       app.displayMessages(data);
+      app.getRoomNames(data);
     },
     error: function (data) {
 
       console.error('chatterbox: Failed to send message', data);
     }
   });
+};
+
+app.getRoomNames = function(data) {
+  data.results.forEach(function(value) {
+    app.roomNames[value.roomname] = value.roomname;
+  });
+
+  for (var key in app.roomNames) {
+    $('#roomSelect').append('<option value=' + key + '>' + key + ' </option>');
+  }
 };
 
 app.displayMessages = function(data) {
@@ -120,6 +150,12 @@ app.getParameterByName = function(name, url) { // TODO figure out exactly how th
 
 $( document ).ready(function() { // can only manipulate the page once the document is ready
   app.init();
+  app.fetch();
 
 });
+
+// Get all the roomnames in the objects
+// Populate the dropdown list with unique roomnames
+// 
+
 
