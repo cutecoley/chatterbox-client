@@ -6,14 +6,13 @@ var app = {
 app.server = 'https://api.parse.com/1/classes/messages';
 app.roomNames = {};
 
-
 app.init = function() {
 
   // Creating our listeners
   $( '.submit' ).on( 'click', app.handleSubmit);
 
   // Delegate handlers to the friend class
-  $( "#chats" ).on( "click", "strong", app.handleUsernameClick);
+  $( '#chats' ).on( 'click', 'strong', app.handleUsernameClick);
 
   // Add handler to room dropdown menu
   $('#roomSelect').on('change', function(event) {
@@ -35,16 +34,15 @@ app.handleUsernameClick = function(event) {
 
 app.handleSubmit = function(event) {
   event.preventDefault(); // prevents default behavior of refreshing the page
-  var username = app.getParameterByName('username');
+  var username = window.location.search.slice(10);
   var message = $('#message').val();
   var message = {
     username: username,
     text: message,
-    roomname: 'lobby' // TODO remove hardcoding
+    roomname: $('#roomSelect').val() // TODO remove hardcoding
   };
   app.send(message);
 };
-
 
 app.send = function(message) {
   $.ajax({
@@ -54,6 +52,10 @@ app.send = function(message) {
     contentType: 'application/json',
     success: function (data) {
       console.log('chatterbox: Message sent');
+
+      app.fetch();
+      $('#message').val('');
+
     },
     error: function (data) {
       // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
@@ -137,34 +139,29 @@ app.renderRoom = function (room) {
   $('#roomSelect').append('<li>' + room + '</li>');
 };
 
-
-
-app.getParameterByName = function(name, url) { // TODO figure out exactly how this regex works
-  if (!url) {
-    url = window.location.href;
-  }
-  name = name.replace(/[\[\]]/g, "\\$&");
-  var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-    results = regex.exec(url);
-  if (!results) {
-    return null;
-  } 
-
-  if (!results[2]) {
-    return '';
-  }
-
-  return decodeURIComponent(results[2].replace(/\+/g, " "));
-};
-
 $( document ).ready(function() { // can only manipulate the page once the document is ready
   app.init();
   app.fetch();
   $('#roomSelect').val('lobby');
 });
 
-// Get all the roomnames in the objects
-// Populate the dropdown list with unique roomnames
-// 
+
+// app.getParameterByName = function(name, url) { // TODO figure out exactly how this regex works
+//   if (!url) {
+//     url = window.location.href;
+//   }
+//   name = name.replace(/[\[\]]/g, "\\$&");
+//   var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+//     results = regex.exec(url);
+//   if (!results) {
+//     return null;
+//   } 
+
+//   if (!results[2]) {
+//     return '';
+//   }
+
+//   return decodeURIComponent(results[2].replace(/\+/g, " "));
+// };
 
 
